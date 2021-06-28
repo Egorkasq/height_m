@@ -3,6 +3,7 @@ import logging
 
 
 def computation_tile(height_map, machine_loc, tile_size=(50, 50)):
+
     """
 
     :param height_map: np array
@@ -15,33 +16,56 @@ def computation_tile(height_map, machine_loc, tile_size=(50, 50)):
 
     tile_position = (machine_loc[0] - tile_size[0] // 2, machine_loc[1] - tile_size[1] // 2)  # top left coord
 
-    if tile_position[0] < 0 or tile_position[1] < 0:
+    new_position = list(tile_position)
 
-        # correct tile position if machine near end of map
-        delta_y = 0 - tile_position[0]
-        delta_x = 0 - tile_position[1]
-        correct_pos = (tile_position[0] + delta_y, tile_position[1] + delta_x)
+    if tile_position[0] < 0 and tile_position[1] < 0:
 
-        tile = height_map[correct_pos[0]: correct_pos[0] + tile_size[0],
-                          correct_pos[1]: correct_pos[1] + tile_size[1], ]
+        new_position[0] = 0
+        new_position[1] = 0
 
-        logging.info("Top left of tile {}".format(correct_pos))
+        logging.info("top left of tile {}".format(new_position))
 
-    else:
-        tile = height_map[tile_position[0]: tile_position[0] + tile_size[0],
-                          tile_position[1]: tile_position[1] + tile_size[1], ]
+        return height_map[new_position[0]: new_position[0] + tile_size[0],
+                          new_position[1]: new_position[1] + tile_size[1]]
 
-        logging.info("top left of tile {}".format(tile_position))
+    if tile_position[0] < 0:
+        new_position[0] = 0
+
+    if tile_position[1] < 0:
+        new_position[1] = 0
+
+    if tile_position[0] > height_map.shape[0] - tile_size[0] // 2 and \
+            tile_position[1] > height_map.shape[1] - tile_size[1] // 2:
+
+        new_position[0] = height_map.shape[0] - tile_size[0]
+        new_position[1] = height_map.shape[1] - tile_size[1]
+
+        logging.info("top left of tile {}".format(new_position))
+
+        return height_map[new_position[0]: new_position[0] + tile_size[0] // 2,
+                          new_position[1]: new_position[1] + tile_size[1] // 2]
+
+    if tile_position[0] > height_map.shape[0] - tile_size[0]:
+        new_position[0] = height_map.shape[0] - tile_size[0]
+
+    if tile_position[1] > height_map.shape[1] - tile_size[1]:
+        new_position[1] = height_map.shape[1] - tile_size[1]
+
+    logging.info("top left of tile {}".format(new_position))
+
+    tile = height_map[new_position[0]: new_position[0] + tile_size[0],
+                      new_position[1]: new_position[1] + tile_size[1]]
 
     return tile
 
 
 if __name__ == '__main__':
-    map_size_h = 50
-    map_size_w = 50
-    image = cv2.imread("Heightmap.png", 0)
+    map_size_h = 100
+    map_size_w = 100
+    image = cv2.imread("landshaft-bernskikh-alp-v-yasniy-den_thumb.jpg", 0)
+    # 800 450
+    point_x = 300
+    point_y = 300
 
-    point_x = 100
-    point_y = 100
-
-    computation_tile(image, (point_y, point_x))
+    # computation_tile(image, (point_y, point_x))
+    computation_tile(image, (point_y, point_x), (map_size_h, map_size_w))
