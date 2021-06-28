@@ -4,10 +4,14 @@ import logging
 
 
 class MyServer(Flask):
-    # def __init__(self, *args, **kwargs):
-    #     super(MyServer, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(MyServer, self).__init__(*args, **kwargs)
 
     # @self.app.route('/load_image', methods=["GET"])
+    @staticmethod
+    def test_rout():
+        return "hello"
+
     def load_img(self):
         json_file = request.args
         path_to_img = json_file["image_path"]
